@@ -63,7 +63,7 @@ class UI:
             # End program if user closes window or
             # presses the OK button
             if event == 'Send':
-                print('You entered ', values['-INPUT-'])
+                print('Poslan ukaz', values['-INPUT-'])
                 SerialCommunication.send_command(values['-INPUT-'])
             if event == "Exit" or event == psg.WIN_CLOSED:
                 break
@@ -79,7 +79,10 @@ class SerialCommunication:
             timeout=timeout,
             parity=parity, 
             stopbits=stopbits)
-    
+    #VIDIS KO SI IDIOT PA NEZNAS BRAT 
+        # Commands consist of a command header and, if necessary, parameter data. All com-
+        # mands must be terminated with either a carriage return (ASCII 0D hex or 13 decimal)
+        # or new line character (ASCII 0A hex or 10 decimal).
     def send_command(self, command):
         self.ser.write(command)
         time.sleep(0.1)
