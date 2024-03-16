@@ -9,6 +9,13 @@ class Camera:
         self.simulated = simulated
         if simulated:
             return
+        
+        # CAMERA SPECIFICATIONS
+        # Baudrate: 4800
+        # Parity: Even
+        # Data bits: 7
+        # Stop bits: 2
+        # Start bit: 1
 
         self.ser = serial.Serial(port, baudrate=4800, stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, parity=serial.PARITY_EVEN, timeout=1.0)
 
@@ -58,7 +65,7 @@ class Camera:
 camera = Camera(simulated=True)
 
 temp = camera.take_measurement()
-print(temp)
+print(temp, time.time())
 
 camera.clear_buffer()
 camera.close()
