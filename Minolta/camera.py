@@ -1,12 +1,21 @@
 import serial
 import time
-
+import random
+import math
+import numpy as np
 
 class Camera:
-    def __init__(self, port = '/dev/ttyUSB0'):
+    def __init__(self, port = '/dev/ttyUSB0', simulated = False):
+        self.simulated = simulated
+        if simulated:
+            return
+
         self.ser = serial.Serial(port, baudrate=4800, stopbits=serial.STOPBITS_TWO, bytesize=serial.SEVENBITS, parity=serial.PARITY_EVEN, timeout=1.0)
 
     def clear_buffer(self):
+        if self.simulated:
+            return
+        
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()
 
@@ -25,6 +34,10 @@ class Camera:
 
 
     def take_measurement(self):
+        
+        if self.simulated:
+            return round(23.0 + 3*random.random(), 1)
+        
         response = self.send_command('MS')
         response = response.decode('utf-8')
 
@@ -37,9 +50,12 @@ class Camera:
 
     
     def close(self):
+        if self.simulated:
+            return
+
         self.ser.close()
 
-camera = Camera()
+camera = Camera(simulated=True)
 
 temp = camera.take_measurement()
 print(temp)
