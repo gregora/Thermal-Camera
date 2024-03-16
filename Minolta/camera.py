@@ -62,11 +62,15 @@ class Camera:
 
         self.ser.close()
 
-camera = Camera(simulated=True)
 
-temp = camera.take_measurement()
-print(temp, time.time())
+def test_camera():
 
-camera.clear_buffer()
-camera.close()
+    camera = Camera(simulated=False)
 
+    temp = camera.take_measurement()
+    print(temp, time.time())
+
+    camera.clear_buffer()
+    camera.close()
+
+test_camera()
