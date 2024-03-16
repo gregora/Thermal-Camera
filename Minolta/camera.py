@@ -72,5 +72,3 @@ def test_camera():
 
     camera.clear_buffer()
     camera.close()
-
-test_camera()
