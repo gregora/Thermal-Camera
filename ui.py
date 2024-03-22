@@ -1,10 +1,12 @@
 import sys
 import time
 from datetime import datetime
+import serial
 
 import numpy as np
 
 from Minolta.Camera import Camera
+from Fluke.Fluke import Fluke
 
 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
@@ -95,6 +97,13 @@ class App(QWidget):
             print("No data to export!")
 
 if __name__ == '__main__':
+
+    f = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB0')
+    response = Fluke.send_command('SOUR:SENS:DATA?')
+    
+    print(response)
+
     app = QApplication(sys.argv)
     ex = App()
     sys.exit(app.exec_())
+
