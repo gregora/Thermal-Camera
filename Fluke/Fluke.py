@@ -5,9 +5,9 @@ import time
 
 
 class Fluke:
-    def __init__(self, baudrate, timeout, parity, stopbits):
+    def __init__(self, baudrate, timeout, parity, stopbits, port = 'COM3'):
         self.ser = serial.Serial(
-            port = 'COM3',
+            port = port,
             baudrate = baudrate,
             timeout=timeout,
             parity=parity, 
