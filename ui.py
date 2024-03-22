@@ -4,7 +4,7 @@ from datetime import datetime
 
 import numpy as np
 
-from Minolta.camera import Camera
+from Minolta.Camera import Camera
 
 
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
