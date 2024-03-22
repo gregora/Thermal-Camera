@@ -32,10 +32,3 @@ class Fluke:
 
         return result
     
-    
-#if __name__ == '__main__':
-#    F = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE)
-#    response = Fluke.send_command('SOUR:SENS:DATA?')
-#    
-#    print(response)
-    
