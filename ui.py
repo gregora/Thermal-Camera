@@ -45,8 +45,8 @@ class App(QWidget):
         button.clicked.connect(self.on_click)
 
         self.label = QLabel("/", self)
-        self.label.move(500, 860)
-        self.label.resize(500, 50)
+        self.label.move(350, 860)
+        self.label.resize(800, 50)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         font = self.label.font()
         font.setPointSize(25)
@@ -88,9 +88,24 @@ class App(QWidget):
         std_camera = np.std(self.data_camera)
         std_fluke = np.std(self.data_fluke)
 
-        self.label.setText("Camera: " + str(temp_camera) + " °C    -    Fluke: " + str(temp_fluke) + " °C")
-        self.graph.plot(self.timestamps, self.data_camera, clear = True, pen = 'r')
-        self.graph.plot(self.timestamps, self.data_fluke, clear = False, pen = 'b')
+        self.label.setText("Camera: " + str(temp_camera) + " °C         Fluke: " + str(temp_fluke) + " °C")
+        self.graph.plot(self.timestamps, self.data_camera,
+                        name = "Camera Temp",
+                        clear = True,
+                        pen = 'r',
+                        symbol = 'o',
+                        symbolBrush = 'r',
+                        symbolSize = 5
+                        )
+        
+        self.graph.plot(self.timestamps, self.data_fluke,
+                        name = "Fluke Temp",
+                        clear = False,
+                        pen = 'b',
+                        symbol = 'o',
+                        symbolBrush = 'b',
+                        symbolSize = 5
+                        )
 
         self.graph_data.setText("First data point at: " + str(datetime.fromtimestamp(self.initial_timestamp).isoformat(sep=" ", timespec="seconds")) + "\n")
         self.graph_data.setText(self.graph_data.text() + "Standard deviation of camera: " + str(round(std_camera, 2)))
@@ -106,6 +121,6 @@ class App(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    ex = App(simulate=True)
+    ex = App(simulate=False)
     sys.exit(app.exec_())
 
