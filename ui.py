@@ -26,7 +26,7 @@ class App(QWidget):
         self.width = 1500
         self.height = 1000
         self.initUI()
-        self.camera = Camera(simulated = True)
+        self.camera = Camera(simulated = False)
 
         self.data = []
         self.timestamps = []
@@ -83,14 +83,14 @@ class App(QWidget):
         self.label.setText(str(temp) + " °C")
         self.graph.plot(self.timestamps, self.data, clear = True, pen = 'b')
 
-        self.graph_data.setText("First data point at: " + str(datetime.fromtimestamp(self.initial_timestamp)) + "\n")
+        self.graph_data.setText("First data point at: " + str(datetime.fromtimestamp(self.initial_timestamp).isoformat(sep=" ", timespec="seconds")) + "\n")
         self.graph_data.setText(self.graph_data.text() + "Standard deviation: " + str(round(std, 2)))
 
     @pyqtSlot()
     def export_graph(self):
         if len(self.data) > 0: 
             exporter = pg.exporters.CSVExporter(self.graph.plotItem)
-            exporter.export('data/' + str(datetime.fromtimestamp(self.initial_timestamp)) + '.csv')
+            exporter.export('data/' + str(datetime.fromtimestamp(self.initial_timestamp).isoformat(sep=" ", timespec="seconds")) + '.csv')
         else:
             print("No data to export!")
 
