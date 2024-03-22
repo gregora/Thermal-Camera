@@ -20,7 +20,7 @@ import pyqtgraph.exporters
 
 
 class App(QWidget):
-    def __init__(self):
+    def __init__(self, simulate = False):
         super().__init__()
         self.title = 'Remote temperature mesurement system'
         self.left = 10
@@ -28,9 +28,11 @@ class App(QWidget):
         self.width = 1500
         self.height = 1000
         self.initUI()
-        self.camera = Camera(simulated = False)
+        self.camera = Camera(port = '/dev/ttyUSB0', simulated = simulate)
+        self.fluke = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB1', simulated = simulate)
 
-        self.data = []
+        self.data_camera = []
+        self.data_fluke = []
         self.timestamps = []
   
     def initUI(self):
@@ -43,8 +45,8 @@ class App(QWidget):
         button.clicked.connect(self.on_click)
 
         self.label = QLabel("/", self)
-        self.label.move(700, 860)
-        self.label.resize(100, 50)
+        self.label.move(500, 860)
+        self.label.resize(500, 50)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         font = self.label.font()
         font.setPointSize(25)
@@ -73,37 +75,37 @@ class App(QWidget):
 
     @pyqtSlot()
     def on_click(self):
-        temp = self.camera.take_measurement()
+        temp_camera = self.camera.take_measurement()
+        temp_fluke = float(self.fluke.send_command('SOUR:SENS:DATA?'))
         
-        if(len(self.data) == 0):
+        if(len(self.data_camera) == 0):
             self.initial_timestamp = time.time()
-        self.data.append(temp)
+
+        self.data_camera.append(temp_camera)
+        self.data_fluke.append(temp_fluke)
         self.timestamps.append(time.time() - self.initial_timestamp)
         
-        std = np.std(self.data)
+        std_camera = np.std(self.data_camera)
+        std_fluke = np.std(self.data_fluke)
 
-        self.label.setText(str(temp) + " °C")
-        self.graph.plot(self.timestamps, self.data, clear = True, pen = 'b')
+        self.label.setText("Camera: " + str(temp_camera) + " °C    -    Fluke: " + str(temp_fluke) + " °C")
+        self.graph.plot(self.timestamps, self.data_camera, clear = True, pen = 'r')
+        self.graph.plot(self.timestamps, self.data_fluke, clear = False, pen = 'b')
 
         self.graph_data.setText("First data point at: " + str(datetime.fromtimestamp(self.initial_timestamp).isoformat(sep=" ", timespec="seconds")) + "\n")
-        self.graph_data.setText(self.graph_data.text() + "Standard deviation: " + str(round(std, 2)))
+        self.graph_data.setText(self.graph_data.text() + "Standard deviation of camera: " + str(round(std_camera, 2)))
+        self.graph_data.setText(self.graph_data.text() + "\nStandard deviation of Fluke: " + str(round(std_fluke, 2)))
 
     @pyqtSlot()
     def export_graph(self):
-        if len(self.data) > 0: 
+        if len(self.data_camera) > 0: 
             exporter = pg.exporters.CSVExporter(self.graph.plotItem)
             exporter.export('data/' + str(datetime.fromtimestamp(self.initial_timestamp).isoformat(sep=" ", timespec="seconds")) + '.csv')
         else:
             print("No data to export!")
 
 if __name__ == '__main__':
-
-    f = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB0')
-    response = Fluke.send_command('SOUR:SENS:DATA?')
-    
-    print(response)
-
     app = QApplication(sys.argv)
-    ex = App()
+    ex = App(simulate=True)
     sys.exit(app.exec_())
 

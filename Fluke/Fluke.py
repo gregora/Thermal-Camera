@@ -1,11 +1,17 @@
 import serial
 import time
+import random
 
 
 
 
 class Fluke:
-    def __init__(self, baudrate, timeout, parity, stopbits, port = 'COM3'):
+    def __init__(self, baudrate, timeout, parity, stopbits, port = 'COM3', simulated = False):
+
+        self.simulated = simulated
+        if simulated:
+            return
+
         self.ser = serial.Serial(
             port = port,
             baudrate = baudrate,
@@ -13,12 +19,17 @@ class Fluke:
             parity=parity, 
             stopbits=stopbits,
             bytesize=serial.EIGHTBITS)
-    #VIDIS KO SI IDIOT PA NEZNAS BRAT 
-        # Commands consist of a command header and, if necessary, parameter data. All com-
-        # mands must be terminated with either a carriage return (ASCII 0D hex or 13 decimal)
-        # or new line character (ASCII 0A hex or 10 decimal).
+        #VIDIS KO SI IDIOT PA NEZNAS BRAT 
+            # Commands consist of a command header and, if necessary, parameter data. All com-
+            # mands must be terminated with either a carriage return (ASCII 0D hex or 13 decimal)
+            # or new line character (ASCII 0A hex or 10 decimal).
+
 
     def send_command(self, command):
+
+        if self.simulated:
+            return round(23.0 + 3*random.random(), 1)
+
         result = b''
         self.ser.setRTS(True)
 
