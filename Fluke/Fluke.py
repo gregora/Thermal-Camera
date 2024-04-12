@@ -32,3 +32,26 @@ class Fluke:
 
         return result
     
+    def start(self,temp):
+        set_PT = self.send_command('SOUR:SPO ' + str(temp)) #Nastavitev main set pointa !
+        start = self.send_command('OUTP:STAT 1') # 0 - OFF, 1 - ON
+
+        print("Set point temperature: ",temp)
+    
+    def stop(self):
+        stop = self.send_command('OUTP:STAT 0')
+        print("Stoping...")
+
+    def reached_temp(self):
+        set_p = self.send_command('SOUR:SPO?') #SOUR:STAB:TEST? SOUR:STAB:LIM?
+        set_p = float(set_p)
+        print("Set temp",set_p)
+        temp = self.send_command('SOUR:SENS:DATA?')
+        temp = float(temp)
+        print("Actual Temp",temp)
+        f = temp - set_p
+        while f > 0.01 or f < -0.01:
+            return 0
+        return 1
+    
+    
