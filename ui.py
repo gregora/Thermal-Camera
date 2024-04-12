@@ -9,7 +9,7 @@ from Minolta.Camera import Camera
 from Fluke.Fluke import Fluke
 
 
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QLineEdit
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 import PyQt5.QtCore as QtCore
@@ -27,21 +27,25 @@ class App(QWidget):
         self.top = 10
         self.width = 1500
         self.height = 1000
-        self.initUI()
         self.camera = Camera(port = '/dev/ttyUSB0', simulated = simulate)
         self.fluke = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB1', simulated = simulate)
+
+        self.initUI()
 
         self.data_camera = []
         self.data_fluke = []
         self.timestamps = []
   
     def initUI(self):
+    
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
         button = QPushButton('Measure', self)
         button.resize(100, 50)
         button.move(700, 925)
+        font = button.font()
+        font.setPointSize(50)
         button.clicked.connect(self.on_click)
 
         self.label = QLabel("/", self)
@@ -49,7 +53,7 @@ class App(QWidget):
         self.label.resize(800, 50)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         font = self.label.font()
-        font.setPointSize(25)
+        font.setPointSize(20)
         self.label.setFont(font)
 
         self.graph = pg.PlotWidget(self)
@@ -71,12 +75,22 @@ class App(QWidget):
         font.setPointSize(15)
         self.graph_data.setFont(font)
 
+        self.input_label = QLabel("Set temperature: ", self)
+        self.input_label.move(850, 925)
+        self.input_label.resize(150, 50)
+
+        self.input = QLineEdit(self)
+        self.input.move(975, 925)
+        self.input.resize(100, 50) 
+        self.input.returnPressed.connect(self.on_text_edited)
+        self.input.setText(str(self.fluke.get_set_point_temp()))
+
         self.show()
 
     @pyqtSlot()
     def on_click(self):
         temp_camera = self.camera.take_measurement()
-        temp_fluke = float(self.fluke.send_command('SOUR:SENS:DATA?'))
+        temp_fluke = self.fluke.get_temp()
         
         if(len(self.data_camera) == 0):
             self.initial_timestamp = time.time()
@@ -119,14 +133,20 @@ class App(QWidget):
         else:
             print("No data to export!")
 
-if __name__ == '__main__':
+    @pyqtSlot()
+    def on_text_edited(self):
+        if self.input.text() == "":
+            return
+        temp = float(self.input.text())
+        self.fluke.start(temp)
+        self.input.setText(str(self.fluke.get_set_point_temp()))
 
-    f = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB0')
-    response = Fluke.send_command('SOUR:SENS:DATA?')
-    
-    print(response)
+
+if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     ex = App(simulate=False)
+
     sys.exit(app.exec_())
+
 

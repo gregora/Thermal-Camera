@@ -53,6 +53,14 @@ class Fluke:
         stop = self.send_command('OUTP:STAT 0')
         print("Stoping...")
 
+    def get_temp(self):
+        temp_app = float(self.send_command('SOUR:SENS:DATA?')) #display temperature
+        return temp_app
+    
+    def get_set_point_temp(self):
+        temp_set = float(self.send_command('SOUR:SPO?'))
+        return temp_set
+    
     def reached_temp(self):
         set_p = self.send_command('SOUR:SPO?') #SOUR:STAB:TEST? SOUR:STAB:LIM?
         set_p = float(set_p)
