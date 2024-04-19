@@ -85,6 +85,41 @@ class App(QWidget):
         self.input.returnPressed.connect(self.on_text_edited)
         self.input.setText(str(self.fluke.get_set_point_temp()))
 
+        #Fluke infomation
+        self.status = QPushButton(self)
+        self.status.move(1400, 750)  
+        self.status.resize(30, 30)  
+        self.status.setStyleSheet("background-color: green; border-radius: 15px;") #Green on / Red off ?
+   
+        self.fluke_info = QLabel("Podatki fluke:", self)
+        self.fluke_info.move(1350, 700)  
+        self.fluke_info.resize(150, 50)  
+
+        self.on_off = QLabel("On/Off", self)
+        self.on_off.move(1340, 740)  
+        self.on_off.resize(150, 50) 
+
+        self.irt = QLabel("", self)
+        self.irt.setGeometry(1370, 790, 60, 40)  
+        self.irt.setStyleSheet("border: 1px solid black;")  
+
+        self.irt_label = QLabel("IRT ε", self)
+        self.irt_label.move(1340, 785)  
+        self.irt_label.resize(150, 50) 
+         
+        self.cal = QLabel("", self)
+        self.cal.setGeometry(1370, 850, 60, 40) 
+        self.cal.setStyleSheet("border: 1px solid black;")  
+
+        self.cal_label = QLabel("CAL λ", self)
+        self.cal_label.move(1340, 845)  
+        self.cal_label.resize(150, 50) 
+
+        #test
+        self.irt.setText("0.950")
+        self.cal.setText("8-14" + " μm")
+        #TODO logiko spisati za spreminjanje barve in dodajanje podatkov
+
         self.show()
 
     @pyqtSlot()
@@ -145,7 +180,7 @@ class App(QWidget):
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    ex = App(simulate=False)
+    ex = App(simulate=True)
 
     sys.exit(app.exec_())
 
