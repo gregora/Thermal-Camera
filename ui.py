@@ -95,8 +95,8 @@ class App(QWidget):
         self.status.resize(30, 30)  
         self.status.setStyleSheet("background-color: green; border-radius: 15px;") #Green on / Red off ?
    
-        self.fluke_info = QLabel("Podatki fluke:", self)
-        self.fluke_info.move(1350, 700)  
+        self.fluke_info = QLabel("Info - Fluke:", self)
+        self.fluke_info.move(1300, 700)  
         self.fluke_info.resize(150, 50)  
 
         self.on_off = QLabel("On/Off", self)
@@ -119,18 +119,48 @@ class App(QWidget):
         self.cal_label.move(1300, 845)  
         self.cal_label.resize(150, 50) 
 
-        #test
-        self.irt.setText("")
-        self.cal.setText("")
-        #TODO logiko spisati za spreminjanje barve in dodajanje podatkov
-
         self.update_fluke_info()
+
+        # Minolta information
+        self.minolta_info = QLabel("Info - Minolta:", self)
+        self.minolta_info.move(200, 700)  
+        self.minolta_info.resize(150, 50)  
+
+        self.minolta_irt = QLabel("", self)
+        self.minolta_irt.setGeometry(270, 790, 60, 40)  
+        self.minolta_irt.setStyleSheet("border: 1px solid black;")  
+
+        self.minolta_irt_label = QLabel("IRT ε", self)
+        self.minolta_irt_label.move(200, 785)  
+        self.minolta_irt_label.resize(150, 50)
+
+        self.minolta_mode = QLabel("", self)
+        self.minolta_mode.setGeometry(270, 850, 60, 40)
+        self.minolta_mode.setStyleSheet("border: 1px solid black;")
+
+        self.minolta_mode_label = QLabel("Mode", self)
+        self.minolta_mode_label.move(200, 845)
+        self.minolta_mode_label.resize(150, 50)
+
+        self.minolta_focus = QLabel("", self)
+        self.minolta_focus.setGeometry(270, 910, 60, 40)
+        self.minolta_focus.setStyleSheet("border: 1px solid black;")
+
+        self.minolta_focus_label = QLabel("Focus", self)
+        self.minolta_focus_label.move(200, 905)
+        self.minolta_focus_label.resize(150, 50)
+
+
+        self.update_minolta_info()
+
+
+
 
         self.show()
 
     def update_fluke_info(self):
 
-        temp, out_stat, set_p, irt, cal = self.fluke.get_data()
+        out_stat, irt, cal = self.fluke.get_data()
 
 
         if int(out_stat) == 1:
@@ -144,6 +174,27 @@ class App(QWidget):
             self.cal.setText("8-14 μm")
         else:
             self.cal.setText("undefined!")
+
+    def update_minolta_info(self):
+        irt, mode, focus, alarm = self.camera.status()
+
+        self.minolta_irt.setText(str(irt))
+
+        if mode == 'H':
+            self.minolta_mode.setText("Manual")
+        elif mode == 'M':
+            self.minolta_mode.setText("Monitor")
+
+
+        if focus == 'A':
+            self.minolta_focus.setText("Auto")
+        elif focus == 'M':
+            self.minolta_focus.setText("Manual")
+
+        if alarm == 'A':
+            print("ALARM OUT OF BOUNDS")
+        elif alarm == 'N':
+            print("Alarm normal")
 
 
     @pyqtSlot()
@@ -199,7 +250,8 @@ class App(QWidget):
         temp = float(self.input.text())
         self.fluke.start(temp)
         self.input.setText(str(self.fluke.get_set_point_temp()))
-
+        
+        self.update_minolta_info()
         self.update_fluke_info()
 
 
