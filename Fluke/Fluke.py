@@ -79,8 +79,8 @@ class Fluke:
         set_p = self.send_command('SOUR:SPO?') #Set point temperature
         irt = self.send_command('SOUR:EMIS?') #IRT stat
         cal = self.send_command('SOUR:CAL:WAV?') #Cal stat
+        
         return temp,out_stat,set_p,irt,cal
 
-        return 0
     
     
