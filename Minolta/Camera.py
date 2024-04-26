@@ -62,15 +62,18 @@ class Camera:
 
         self.ser.close()
 
-    def set_alarm(self,upper,lower,alarm):
-        response = self.send_command('AS&S' + str(upper) + 'S' + str(lower))
-        return 0
-        
+    def set_alarm(self, upper, lower, alarm):
+        if alarm == 1:
+            response = self.send_command('AS&S{:_>4}S{:_>4}S'.format(upper, lower))
+        else: 
+            response = self.send_command('AS&S{:_>4}S{:_>4}'.format(upper, lower))
+
+        return response
 
 
     def disable_alarm(self):
         response = self.send_command('AS&C____C____C')
-        return 0 
+        return response 
     
 
 
@@ -94,8 +97,4 @@ def test_camera():
     print(temp, time.time())
     camera.clear_buffer()
     camera.close()
-
-
-
-
 
