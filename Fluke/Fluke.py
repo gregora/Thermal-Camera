@@ -58,7 +58,10 @@ class Fluke:
         return temp_app
     
     def get_set_point_temp(self):
-        temp_set = float(self.send_command('SOUR:SPO?'))
+        try:
+            temp_set = float(self.send_command('SOUR:SPO?'))
+        except:
+            temp_set = 0
         return temp_set
     
     def reached_temp(self):

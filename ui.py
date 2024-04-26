@@ -2,6 +2,7 @@ import sys
 import time
 from datetime import datetime
 import serial
+import threading
 
 import numpy as np
 
@@ -35,7 +36,10 @@ class App(QWidget):
         self.data_camera = []
         self.data_fluke = []
         self.timestamps = []
-  
+
+        self.update_interval = threading.Thread(target = self.update_fluke_info)
+        self.update_interval.start()
+
     def initUI(self):
     
         self.setWindowTitle(self.title)
@@ -104,7 +108,7 @@ class App(QWidget):
         self.irt.setStyleSheet("border: 1px solid black;")  
 
         self.irt_label = QLabel("IRT ε", self)
-        self.irt_label.move(1340, 785)  
+        self.irt_label.move(1300, 785)  
         self.irt_label.resize(150, 50) 
          
         self.cal = QLabel("", self)
@@ -112,15 +116,35 @@ class App(QWidget):
         self.cal.setStyleSheet("border: 1px solid black;")  
 
         self.cal_label = QLabel("CAL λ", self)
-        self.cal_label.move(1340, 845)  
+        self.cal_label.move(1300, 845)  
         self.cal_label.resize(150, 50) 
 
         #test
-        self.irt.setText("0.950")
-        self.cal.setText("8-14" + " μm")
+        self.irt.setText("")
+        self.cal.setText("")
         #TODO logiko spisati za spreminjanje barve in dodajanje podatkov
 
+        self.update_fluke_info()
+
         self.show()
+
+    def update_fluke_info(self):
+
+        temp, out_stat, set_p, irt, cal = self.fluke.get_data()
+
+
+        if int(out_stat) == 1:
+            self.status.setStyleSheet("background-color: green; border-radius: 15px;")
+        else:
+            self.status.setStyleSheet("background-color: red; border-radius: 15px;")
+
+        self.irt.setText(str(irt))
+
+        if int(cal) == 0:
+            self.cal.setText("8-14 μm")
+        else:
+            self.cal.setText("undefined!")
+
 
     @pyqtSlot()
     def on_click(self):
@@ -176,11 +200,13 @@ class App(QWidget):
         self.fluke.start(temp)
         self.input.setText(str(self.fluke.get_set_point_temp()))
 
+        self.update_fluke_info()
+
 
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
-    ex = App(simulate=True)
+    ex = App(simulate=False)
 
     sys.exit(app.exec_())
 
