@@ -62,13 +62,40 @@ class Camera:
 
         self.ser.close()
 
+    def set_alarm(self,upper,lower,alarm):
+        response = self.send_command('AS&S' + str(upper) + 'S' + str(lower))
+        return 0
+        
 
+
+    def disable_alarm(self):
+        response = self.send_command('AS&C____C____C')
+        return 0 
+    
+
+
+    def status(self):
+        response = self.send_command('SR')
+        response = response.decode('utf-8')
+
+        ems = response[1:5]
+        mode = response[5]
+        focus = response[6]
+        alarm = response[7]
+        return ems,mode,focus,alarm
+
+        
+        
 def test_camera():
 
-    camera = Camera(simulated=False)
+    camera = Camera(simulated=True)
 
     temp = camera.take_measurement()
     print(temp, time.time())
-
     camera.clear_buffer()
     camera.close()
+
+
+
+
+
