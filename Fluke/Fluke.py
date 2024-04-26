@@ -72,5 +72,15 @@ class Fluke:
         while f > 0.01 or f < -0.01:
             return 0
         return 1
+
+    def get_data(self):
+        temp = self.get_temp() #Temperature in C
+        out_stat = self.send_command('OUTP:STAT?') # Output stat 0 - OFF, 1 - ON
+        set_p = self.send_command('SOUR:SPO?') #Set point temperature
+        irt = self.send_command('SOUR:EMIS?') #IRT stat
+        cal = self.send_command('SOUR:CAL:WAV?') #Cal stat
+        return temp,out_stat,set_p,irt,cal
+
+        return 0
     
     
