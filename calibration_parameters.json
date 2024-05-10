@@ -11,7 +11,5 @@
     "std_treshold": 0.05,
     "err_treshold": 0.05,
 
-    "camera_emissivity": 0.95,
-    "fluke_emissivity": 0.95
-    
+    "camera_emissivity": 0.95
 }

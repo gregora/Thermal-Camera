@@ -23,7 +23,6 @@ std_treshold = parameters["std_treshold"]
 err_treshold = parameters["err_treshold"]
 
 camera_emissivity = parameters["camera_emissivity"]
-fluke_emissivity = parameters["fluke_emissivity"]
 
 def measure():
 
@@ -82,16 +81,23 @@ def calculate_calibration():
     # linear regression
     reg = LinearRegression().fit(fluke_avg.reshape(-1, 1), camera_avg)
 
+    # print errors at each temperature
+    for i in range(len(camera_avg)):
+        print(f'Error at {temperatures[i]}°C : {float(camera_avg[i] - fluke_avg[i]):,.2f}°C')
+
+    print()
+
+    # print linear regression coefficients
+    print("Model: y = ", reg.coef_[0], "x + ", reg.intercept_)
+
     # visualize camera_avg vs fluke_avg and regression line
-    plt.scatter(fluke_avg, camera_avg)
-    plt.plot(fluke_avg, reg.predict(fluke_avg.reshape(-1, 1)))
+    plt.plot(fluke_avg, reg.predict(fluke_avg.reshape(-1, 1)), c = 'b', linestyle = '--', linewidth = 1)
+    plt.scatter(fluke_avg, camera_avg, c = 'r', s = 10)
     plt.xlabel('Fluke temperature')
     plt.ylabel('Camera temperature')
     plt.title('Calibration')
     plt.show()
 
-    # print linear regression coefficients
-    print("Model: y = ", reg.coef_[0], "x + ", reg.intercept_)
 
     # save calibration coefficients to ./calibration as txt
     np.savetxt('calibration/regression_coefficients.txt', [reg.coef_[0], reg.intercept_])
