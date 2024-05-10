@@ -22,10 +22,16 @@ N_r = parameters["N_r"]
 std_treshold = parameters["std_treshold"]
 err_treshold = parameters["err_treshold"]
 
+camera_emissivity = parameters["camera_emissivity"]
+fluke_emissivity = parameters["fluke_emissivity"]
+
 def measure():
 
     camera = Camera(port = '/dev/ttyUSB1', simulated = SIMULATE)
     fluke = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB0', simulated = SIMULATE)
+
+    camera.set_emissivity(camera_emissivity)
+
 
     camera_measurements = np.zeros((len(temperatures), N))
     fluke_measurements = np.zeros((len(temperatures), N))
