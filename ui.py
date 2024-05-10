@@ -28,8 +28,8 @@ class App(QWidget):
         self.top = 10
         self.width = 1500
         self.height = 1000
-        self.camera = Camera(port = '/dev/ttyUSB0', simulated = simulate)
-        self.fluke = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB1', simulated = simulate)
+        self.camera = Camera(port = '/dev/ttyUSB1', simulated = simulate)
+        self.fluke = Fluke(9600, 1, serial.PARITY_NONE, serial.STOPBITS_ONE, port='/dev/ttyUSB0', simulated = simulate)
 
         self.initUI()
 

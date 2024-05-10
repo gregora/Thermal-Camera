@@ -72,6 +72,7 @@ class Fluke:
         temp = float(temp)
         print("Actual Temp",temp)
         f = temp - set_p
+        
         if f > 0.01 or f < -0.01:
             return 0
         return 1
