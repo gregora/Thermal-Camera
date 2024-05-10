@@ -81,21 +81,24 @@ def calculate_calibration():
     # linear regression
     reg = LinearRegression().fit(fluke_avg.reshape(-1, 1), camera_avg)
 
-    # print errors at each temperature
-    for i in range(len(camera_avg)):
-        print(f'Error at {temperatures[i]}°C : {float(camera_avg[i] - fluke_avg[i]):,.2f}°C')
-
-    print()
-
-    # print linear regression coefficients
-    print("Model: y = ", reg.coef_[0], "x + ", reg.intercept_)
-
     # visualize camera_avg vs fluke_avg and regression line
+    plt.subplot(1, 2, 1)
     plt.plot(fluke_avg, reg.predict(fluke_avg.reshape(-1, 1)), c = 'b', linestyle = '--', linewidth = 1)
     plt.scatter(fluke_avg, camera_avg, c = 'r', s = 10)
-    plt.xlabel('Fluke temperature')
-    plt.ylabel('Camera temperature')
+    plt.text(fluke_avg[0] + 20, camera_avg[0], f'y = {reg.coef_[0]:,.2f}x + {reg.intercept_:,.2f}', fontsize="large", fontstyle="oblique")
+    plt.xlabel('Fluke temperature [°C]')
+    plt.ylabel('Camera temperature [°C]')
     plt.title('Calibration')
+
+    # visualize errors
+    plt.subplot(1, 2, 2)
+    plt.axhline(0, color='black', linewidth=1)
+    plt.plot(temperatures, camera_avg - fluke_avg, c = 'r')
+    plt.xlabel('Reference temperature [°C]')
+    plt.ylabel('Error [°C]')
+    plt.title('Error vs Temperature')
+
+
     plt.show()
 
 
