@@ -87,6 +87,11 @@ class Camera:
         alarm = response[7]
         return ems,mode,focus,alarm
 
+
+    def set_emissivity(self, ems):
+        response = self.send_command('ES&{:.2f}'.format(ems))
+
+        return response
         
         
 def test_camera():
